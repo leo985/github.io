@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8"/>
+<title>企业级扩展点二开平台 - 整体架构图 (HTML)</title>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<style>
+:root {
+  --bg:#0f1115;
+  --panel:#1e2530;
+  --panel-alt:#243140;
+  --panel-accent:#2f4156;
+  --border:#3d5064;
+  --text:#e9eef3;
+  --green:#3fbf7f;
+  --blue:#4aa3ff;
+  --yellow:#f5c84c;
+  --orange:#ff9248;
+  --red:#ff5f56;
+  --pink:#ff79c6;
+  --purple:#b28bff;
+  --teal:#41d8d8;
+  --muted:#92a6b9;
+  --hl:#76d4ff;
+  font-family: "Segoe UI","Helvetica Neue","PingFang SC","Microsoft YaHei",Arial,sans-serif;
+}
+html,body {margin:0;padding:0;background:var(--bg);color:var(--text);}
+body {line-height:1.4; -webkit-font-smoothing: antialiased;}
+h1 {text-align:center;font-size:24px;margin:18px 0 4px;}
+h2 {text-align:center;font-size:14px;font-weight:400;color:var(--muted);margin:0 0 24px;}
+a {color:var(--hl);text-decoration:none;}
+a:hover {text-decoration:underline;}
+.wrapper {
+  max-width:1500px;
+  margin:0 auto 64px;
+  padding:0 20px 80px;
+  position:relative;
+}
+.legend {
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  justify-content:center;
+  margin:12px 0 28px;
+  font-size:12px;
+}
+.legend span {
+  display:inline-flex;
+  align-items:center;
+  gap:4px;
+  background:var(--panel);
+  padding:4px 10px;
+  border:1px solid var(--border);
+  border-radius:20px;
+}
+.legend i {
+  width:14px;height:14px;border-radius:3px;display:block;
+  background:linear-gradient(135deg,var(--blue),var(--purple));
+  box-shadow:0 0 0 1px var(--border);
+}
+.grid {
+  display:grid;
+  gap:28px;
+  position:relative;
+}
+.layer {
+  border:1px solid var(--border);
+  background:linear-gradient(180deg,var(--panel) 0%,var(--panel-alt) 100%);
+  border-radius:14px;
+  padding:18px 16px 20px;
+  position:relative;
+  box-shadow:0 4px 10px -2px rgba(0,0,0,.5),0 0 0 1px rgba(255,255,255,.04) inset;
+}
+.layer-title {
+  font-size:16px;
+  font-weight:600;
+  letter-spacing:.5px;
+  margin:0 0 14px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.layer-title .tag {
+  font-size:10px;
+  padding:2px 6px;
+  background:var(--blue);
+  border-radius:12px;
+  font-weight:500;
+  color:#fff;
+  box-shadow:0 0 0 1px rgba(255,255,255,.1);
+}
+.columns {
+  display:flex;
+  flex-wrap:wrap;
+  gap:14px;
+}
+.module {
+  flex:1 1 170px;
+  min-width:170px;
+  background:var(--panel-accent);
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:10px 12px 12px;
+  position:relative;
+  overflow:hidden;
+  cursor:default;
+  transition:.25s border-color,.25s transform;
+}
+.module:hover {
+  border-color:var(--hl);
+  transform:translateY(-3px);
+}
+.module h4 {
+  margin:0 0 6px;
+  font-size:13px;
+  font-weight:600;
+  letter-spacing:.5px;
+  color:var(--hl);
+  display:flex;
+  align-items:center;
+  gap:6px;
+  flex-wrap:wrap;
+}
+.module h4 span.badge {
+  background:var(--green);
+  color:#072014;
+  font-size:10px;
+  padding:2px 5px 1px;
+  border-radius:6px;
+  letter-spacing:.5px;
+  font-weight:600;
+}
+.module p {
+  margin:0;
+  font-size:11px;
+  color:var(--muted);
+  line-height:1.5;
+  text-wrap:balance;
+}
+.cluster {
+  flex:1 1 330px;
+  min-width:320px;
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+.cluster-header {
+  font-size:11px;
+  text-transform:uppercase;
+  letter-spacing:1px;
+  color:var(--yellow);
+  font-weight:600;
+  opacity:.9;
+}
+.inline-list {
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+}
+.inline-list .pill {
+  font-size:10px;
+  padding:4px 8px;
+  background:#16202b;
+  border:1px solid var(--border);
+  border-radius:8px;
+  color:var(--muted);
+  line-height:1;
+  position:relative;
+}
+.inline-list .pill:hover {
+  color:var(--hl);
+  border-color:var(--hl);
+}
+hr.sep {
+  border:none;
+  height:1px;
+  background:linear-gradient(90deg,transparent,var(--border) 20%,var(--border) 80%,transparent);
+  margin:28px 0;
+}
+.caption {
+  font-size:11px;
+  color:var(--muted);
+  margin-top:6px;
+  text-align:center;
+}
+.flex-between {
+  display:flex;
+  justify-content:space-between;
+  gap:14px;
+  flex-wrap:wrap;
+}
+.notice {
+  background:rgba(255,255,255,.04);
+  border:1px dashed var(--border);
+  padding:10px 14px;
+  font-size:12px;
+  border-radius:10px;
+  line-height:1.6;
+  color:var(--muted);
+}
+.tier-accent {background:linear-gradient(135deg,#243447,#1d2b38);}
+.tier-focus {background:linear-gradient(135deg,#2e3d4b,#25313e);}
+footer {text-align:center;font-size:11px;color:var(--muted);margin:60px 0 10px;}
+/* Connector Canvas */
+svg.connectors {
+  position:absolute;
+  top:0;left:0;
+  width:100%;height:100%;
+  pointer-events:none;
+  overflow:visible;
+}
+.path {
+  stroke:var(--teal);
+  stroke-width:1.6;
+  fill:none;
+  stroke-linecap:round;
+  stroke-dasharray:4 4;
+  opacity:.75;
+  filter:drop-shadow(0 0 4px rgba(65,216,216,.4));
+}
+.path.arrow {
+  marker-end:url(#arrowhead);
+}
+.marker-dot {
+  stroke:none;
+  fill:var(--teal);
+  filter:drop-shadow(0 0 4px rgba(65,216,216,.7));
+}
+@media (max-width:1100px){
+  .columns {flex-direction:row;}
+  .cluster {min-width:260px;}
+}
+@media (max-width:780px){
+  .module {min-width:150px;}
+}
+</style>
+</head>
+<body>
+  <h1>企业级扩展点二开平台 - 整体架构图</h1>
+  <h2>扩展点管理 / 插件生态 / 生命周期 / 分发 / 监控自愈 / 工具链 & 自动化检测</h2>
+
+  <div class="wrapper" id="canvasRoot">
+    <div class="legend">
+      <span><i style="background:linear-gradient(135deg,var(--blue),var(--purple));"></i> 平台核心能力</span>
+      <span><i style="background:linear-gradient(135deg,var(--green),var(--teal));"></i> 支撑与工具链</span>
+      <span><i style="background:linear-gradient(135deg,var(--orange),var(--red));"></i> 节点/运行时</span>
+      <span><i style="background:linear-gradient(135deg,var(--yellow),var(--orange));"></i> 外部角色/生态</span>
+    </div>
+
+    <!-- 用户 / 团队层 -->
+    <div class="layer tier-accent" data-box="layer-users">
+      <div class="layer-title">用户 / 团队层 <span class="tag">Actors</span></div>
+      <div class="inline-list">
+        <div class="pill" data-box="actor-core-dev">标准开发团队</div>
+        <div class="pill" data-box="actor-ext-dev">二开开发团队</div>
+        <div class="pill" data-box="actor-ops">管理员 / 运维</div>
+        <div class="pill" data-box="actor-third">第三方厂商</div>
+        <div class="pill" data-box="actor-product">产品经理</div>
+      </div>
+      <div class="caption">驱动扩展点演进、插件开发、审核运维、生态共建与数据分析</div>
+    </div>
+
+    <!-- 平台核心层 -->
+    <div class="layer tier-focus" data-box="layer-core">
+      <div class="layer-title">二开平台核心层 <span class="tag">Core Platform</span></div>
+      <div class="columns">
+
+        <div class="cluster">
+          <div class="cluster-header">扩展点 & 插件治理</div>
+          <div class="module" data-box="mod-extension">
+            <h4>扩展点管理 <span class="badge">API</span></h4>
+            <p>统一目录 / 元数据采集 / 版本适配矩阵 / 接口文档 / 变更追溯</p>
+          </div>
+          <div class="module" data-box="mod-catalog">
+            <h4>插件目录管理</h4>
+            <p>检索 / 标签 / 租户维度视图 / 可见性控制 / 复用统计</p>
+          </div>
+          <div class="module" data-box="mod-lifecycle">
+            <h4>生命周期管理</h4>
+            <p>注册 / 审核 / 启用 / 升级 / 停用 / 卸载 / 回滚 / 状态机与日志</p>
+          </div>
+        </div>
+
+        <div class="cluster">
+          <div class="cluster-header">交付与运行</div>
+          <div class="module" data-box="mod-distribution">
+            <h4>分发中心</h4>
+            <p>插件包与元数据存储 / 多版本策略 / 节点匹配 / 拉取与灰度</p>
+          </div>
+          <div class="module" data-box="mod-observe">
+            <h4>监控与自愈</h4>
+            <p>健康检测 / 指标采集 / 异常策略 / 自动禁用 / 重启 / 回滚</p>
+          </div>
+          <div class="module" data-box="mod-security">
+            <h4>安全 & 合规</h4>
+            <p>沙箱隔离 / 签名校验 / 依赖与权限边界 / 风险画像</p>
+          </div>
+        </div>
+
+        <div class="cluster">
+          <div class="cluster-header">工具链与自动化</div>
+          <div class="module" data-box="mod-scaffold">
+            <h4>代码生成器</h4>
+            <p>脚手架 / 示例 / SDK 注入 / 语义化版本提示 / 本地下载推送</p>
+          </div>
+          <div class="module" data-box="mod-check">
+            <h4>审核检测</h4>
+            <p>安全扫描 / 静态分析 / 兼容性 / 依赖冲突 / 性能基准</p>
+          </div>
+          <div class="module" data-box="mod-toolchain">
+            <h4>API / SDK / 工具链</h4>
+            <p>统一接口协议 / 适配校验 / CLI & IDE 插件 / 测试框架</p>
+          </div>
+          <div class="module" data-box="mod-log">
+            <h4>日志审计</h4>
+            <p>全生命周期操作记录 / 变更对比 / 合规溯源</p>
+          </div>
+          <div class="module" data-box="mod-alert">
+            <h4>告警通知</h4>
+            <p>多渠道推送 / 阈值策略 / 聚合降噪 / 升级路由</p>
+          </div>
+          <div class="module" data-box="mod-analytics">
+            <h4>全局分析</h4>
+            <p>扩展点复用度 / 租户分布 / 活跃度 / 质量指标 / 演进决策</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- 运行时层 -->
+    <div class="layer" data-box="layer-runtime">
+      <div class="layer-title">运行时执行与隔离层 <span class="tag">Runtime</span></div>
+      <div class="flex-between">
+        <div class="module" style="flex:1 1 360px" data-box="runtime-local">
+          <h4>本地业务节点（Agent）</h4>
+          <p>Plugin Agent / 插件包拉取 / 数字签名与完整性校验 / 沙箱ClassLoader隔离 / 热加载 / 状态与指标上报 / 回滚策略 / WebSocket指令</p>
+          <p style="margin-top:6px;color:var(--yellow);font-size:10px;">目录示例: /opt/plugin-repo/&lt;pluginName&gt;/&lt;version&gt;</p>
+        </div>
+        <div class="module" style="flex:1 1 360px" data-box="runtime-remote">
+          <h4>远程插件服务</h4>
+          <p>Nacos注册 / 服务发现 / OpenAPI 协议 / 健康检查 / 多租户元数据 / 版本与依赖声明 / 网络边界隔离</p>
+          <p style="margin-top:6px;color:var(--yellow);font-size:10px;">metadata: extensionPoint / dependencies / supportVersions / tenantInfo</p>
+        </div>
+        <div class="module" style="flex:1 1 300px" data-box="runtime-adapter">
+          <h4>扩展点调用适配层</h4>
+          <p>路由选择 / 版本适配策略 / 优先级与降级 / 运行态兼容性校验 / 调用链埋点</p>
+        </div>
+      </div>
+      <div class="caption">统一的分发-加载-执行-监控闭环，保障插件对主系统低侵入与高可控</div>
+    </div>
+
+    <!-- 数据治理与存储 -->
+    <div class="layer" data-box="layer-data">
+      <div class="layer-title">元数据与数据治理层 <span class="tag">Data Fabric</span></div>
+      <div class="columns">
+        <div class="module" data-box="data-registry">
+          <h4>扩展点 & 插件元数据仓</h4>
+          <p>定义 / 版本 / 适配映射 (扩展点版本 ↔ 主产品版本)</p>
+        </div>
+        <div class="module" data-box="data-artifacts">
+          <h4>插件制品库</h4>
+          <p>Jar / 镜像 / 远程标识 / 签名 / SBOM / 哈希</p>
+        </div>
+        <div class="module" data-box="data-observability">
+          <h4>运行与监控数据湖</h4>
+          <p>指标 / 日志 / 事件 / 健康历史 / SLA</p>
+        </div>
+        <div class="module" data-box="data-audit">
+          <h4>审计与追溯库</h4>
+          <p>操作轨迹 / 审核记录 / 检测报告 / 合规留存</p>
+        </div>
+        <div class="module" data-box="data-analytics">
+          <h4>分析聚合视图</h4>
+          <p>复用度 / 活跃度 / 风险热力 / 优化建议</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 边界与生态 -->
+    <div class="layer" data-box="layer-ecosystem">
+      <div class="layer-title">外部生态与集成边界 <span class="tag">Ecosystem</span></div>
+      <div class="columns">
+        <div class="module" data-box="eco-nacos">
+          <h4>注册中心 (Nacos)</h4>
+          <p>远程插件发现 / 健康状态监听 / 动态路由 / 服务元数据共享</p>
+        </div>
+        <div class="module" data-box="eco-ci">
+          <h4>CI/CD Pipeline</h4>
+          <p>构建 / 签名 / 扫描 / 自动版本发布 / 触发平台登记</p>
+        </div>
+        <div class="module" data-box="eco-security">
+          <h4>安全扫描平台</h4>
+          <p>依赖漏洞 / 代码风险 / 许可证合规 / 基线对比</p>
+        </div>
+        <div class="module" data-box="eco-message">
+          <h4>消息/告警通道</h4>
+          <p>钉钉 / 邮件 / 短信 / Webhook / ChatOps</p>
+        </div>
+        <div class="module" data-box="eco-third-sdk">
+          <h4>第三方SDK/合作伙伴</h4>
+          <p>开放协议 / 插件生态扩展 / 盈利分发模型</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="notice">
+      说明：本 HTML 架构图聚合文档中所述核心概念，将平台分为七大层次（用户/团队、核心平台、运行时、数据治理、生态集成等），可嵌入到内部门户或文档系统。
+      继续深化可补充：部署拓扑 (多集群/多租户)、时序交互（注册 → 审核 → 分发 → 运行 → 监控自愈）、零信任安全域划分、全局指标模型等。
+    </div>
+
+    <!-- SVG Connectors (auto sized by script) -->
+    <svg class="connectors" id="connSvg">
+      <defs>
+        <marker id="arrowhead" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+          <path d="M0,0 L8,4 L0,8 Z" fill="var(--teal)"/>
+        </marker>
+      </defs>
+      <!-- dynamic paths inserted by JS -->
+    </svg>
+  </div>
+
+  <footer>© 2025 扩展点二开平台 Architecture Diagram (HTML Version)</footer>
+
+<script>
+/**
+ * Lightweight connector engine: draw dashed arrows between conceptual boxes.
+ * We map from a set of named data-box attributes to other ones.
+ */
+const relationships = [
+  // Actors → Core modules
+  ["actor-core-dev","mod-extension"],
+  ["actor-core-dev","mod-lifecycle"],
+  ["actor-ext-dev","mod-scaffold"],
+  ["actor-ext-dev","mod-catalog"],
+  ["actor-ext-dev","mod-check"],
+  ["actor-ops","mod-distribution"],
+  ["actor-ops","mod-observe"],
+  ["actor-ops","mod-alert"],
+  ["actor-product","mod-analytics"],
+  ["actor-third","eco-third-sdk"],
+  // Core internal flows
+  ["mod-extension","mod-lifecycle"],
+  ["mod-lifecycle","mod-distribution"],
+  ["mod-distribution","runtime-local"],
+  ["mod-distribution","runtime-remote"],
+  ["runtime-local","mod-observe"],
+  ["runtime-remote","mod-observe"],
+  ["mod-observe","mod-alert"],
+  ["mod-check","mod-lifecycle"],
+  ["mod-scaffold","mod-check"],
+  ["mod-toolchain","mod-scaffold"],
+  ["mod-extension","data-registry"],
+  ["mod-distribution","data-artifacts"],
+  ["mod-observe","data-observability"],
+  ["mod-log","data-audit"],
+  ["mod-analytics","data-analytics"],
+  // Ecosystem
+  ["runtime-remote","eco-nacos"],
+  ["mod-check","eco-security"],
+  ["mod-distribution","eco-ci"],
+  ["mod-alert","eco-message"],
+  ["eco-third-sdk","mod-lifecycle"]
+];
+
+function rectCenter(r){        
+  return {x:r.left + r.width/2, y:r.top + r.height/2};
+}
+
+function computePath(a,b){
+  // Simple polyline: start -> mid horizontal -> end
+  const dx = Math.abs(a.x - b.x);
+  const dy = Math.abs(a.y - b.y);
+  const turn = Math.min(120, Math.max(40, dx*0.4));
+  const verticalFirst = dy > dx;
+
+  if(verticalFirst){
+    const midY = a.y + (b.y>a.y? dy*0.35 : -dy*0.35);
+    return `M${a.x},${a.y} L${a.x},${midY} L${b.x},${midY} L${b.x},${b.y}`;
+  } else {
+    const midX = a.x + (b.x>a.x? turn : -turn);
+    const midY = a.y + (b.y>a.y? dy*0.6 : -dy*0.6);
+    return `M${a.x},${a.y} L${midX},${a.y} L${midX},${midY} L${b.x},${midY} L${b.x},${b.y}`;
+  }
+}
+
+function draw(){
+  const svg = document.getElementById("connSvg");
+  while(svg.lastChild && svg.lastChild.tagName !== 'DEFS') svg.removeChild(svg.lastChild);
+
+  const rootRect = document.getElementById("canvasRoot").getBoundingClientRect();
+
+  relationships.forEach(([fromId,toId])=>{
+    const fromEl = document.querySelector(`[data-box='${fromId}']`);
+    const toEl = document.querySelector(`[data-box='${toId}']`);
+    if(!fromEl || !toEl) return;
+    const r1 = fromEl.getBoundingClientRect();
+    const r2 = toEl.getBoundingClientRect();
+    const c1 = rectCenter({left:r1.left-rootRect.left, top:r1.top-rootRect.top, width:r1.width, height:r1.height});
+    const c2 = rectCenter({left:r2.left-rootRect.left, top:r2.top-rootRect.top, width:r2.width, height:r2.height});
+
+    const pathEl = document.createElementNS("http://www.w3.org/2000/svg","path");
+    pathEl.setAttribute("class","path arrow");
+    pathEl.setAttribute("d",computePath(c1,c2));
+    svg.appendChild(pathEl);
+
+    // Add subtle dots
+    const dot = document.createElementNS("http://www.w3.org/2000/svg","circle");
+    dot.setAttribute("class","marker-dot");
+    dot.setAttribute("r","3");
+    dot.setAttribute("cx",c1.x);
+    dot.setAttribute("cy",c1.y);
+    svg.appendChild(dot);
+  });
+}
+
+window.addEventListener("load",draw);
+window.addEventListener("resize",()=>{draw();});
+</script>
+</body>
+</html>
